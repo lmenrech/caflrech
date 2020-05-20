@@ -1,0 +1,5 @@
+<div style="display: flex; align-items: center; flex-direction: column">
+  <a style="margin-bottom: 1em"><b>Reports</b></a>
+  <button *ngFor="let report of reports" type="button" class="btn btn-primary" (click)="onClick(report._id, report.name)">{{report.name}}</button>
+</div>
+

@@ -1,0 +1,17 @@
+<div style="display: flex; align-items: center; flex-direction: column">
+  <a style="margin-bottom: 1em"><b>Authentication</b></a>
+  <input style="margin-bottom: 1em"
+    #user
+    type="text"
+    class="form-control"
+    placeholder="Username"
+    value="poc@combateafraude.com">
+  <input style="margin-bottom: 1em"
+    #password
+    type="password"
+    class="form-control"
+    placeholder="Password"
+    value="POC$123poc">
+  <button type="button" class="btn btn-primary" (click)="onSubmit(user.value, password.value)">Login
+  </button>
+</div>
