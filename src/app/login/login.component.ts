@@ -28,9 +28,6 @@ export class LoginComponent extends Main implements OnInit {
 
     const {user, password} = this.credentials;
 
-    console.log('user ', user);
-    console.log('password ', password);
-
     this.setLoading(true);
     this.httpClient.post(
       this.url_login,
