@@ -1,18 +1,19 @@
 import {Component, OnInit} from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Router} from '@angular/router';
-import {CacheStore} from '../../objects/CacheStore';
+import {Main} from '../../objects/Main';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent extends Main implements OnInit {
 
   private url_login = 'https://api.dev.combateafraude.com/auth/signin';
 
   constructor(private httpClient: HttpClient, private router: Router) {
+    super();
   }
 
   ngOnInit(): void {
@@ -20,6 +21,7 @@ export class LoginComponent implements OnInit {
 
   onSubmit(user, password) {
 
+    this.setLoading(true);
     this.httpClient.post(
       this.url_login,
       JSON.stringify({
@@ -33,18 +35,25 @@ export class LoginComponent implements OnInit {
       }
     )
       .toPromise()
-      .then(response => {
-
-        console.log(response);
-
-        // @ts-ignore
-        CacheStore.addObject('authorization', JSON.stringify(response.body));
-        this.router.navigate(['/home']);
-
-      })
-      .catch(console.log);
+      .then((response : LoginResponse) => this.handleResponse(response))
+      .catch(exception => this.onError(exception));
 
   }
 
+  handleResponse(response : LoginResponse) {
+      this.getCache().addObject('authorization', JSON.stringify(response.body));
+      this.setLoading(false);
+      this.router.navigate(['/home']);
+  }
 
+}
+
+interface LoginResponse {
+  body: {
+    accessToken: string,
+    expiresIn: bigint,
+    idToken: string,
+    refreshToken: string,
+    tokenType: string
+  }
 }

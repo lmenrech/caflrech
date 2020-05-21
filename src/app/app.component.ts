@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { CacheStore } from '../objects/CacheStore';
 
 @Component({
   selector: 'app-root',
@@ -7,4 +8,9 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'caf-lrech';
+
+  isLoading() {
+    let loading = CacheStore.getObject('loading');
+    return loading ? loading : false;
+  }
 }

@@ -1,14 +1,14 @@
 import {Component, ElementRef, OnInit, Renderer2} from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Router} from '@angular/router';
-import {CacheStore} from '../../objects/CacheStore';
+import {Main} from '../../objects/Main';
 
 @Component({
   selector: 'app-report',
   templateUrl: './report.component.html',
   styleUrls: ['./report.component.css']
 })
-export class ReportComponent implements OnInit {
+export class ReportComponent extends Main implements OnInit {
 
   private url_executions = 'https://api.dev.combateafraude.com/reports/{id}/executions';
   private authorization;
@@ -20,21 +20,21 @@ export class ReportComponent implements OnInit {
   reportName = "";
 
   constructor(private httpClient: HttpClient, private router: Router, private renderer: Renderer2, private el: ElementRef) {
+    super();
     this.onSubmit();
   }
 
   onSubmit(status = null) {
 
-    this.reportName = CacheStore.getObject('report_name');
-
-    this.headers = [];
-    this.rows = [];
-
-    let authorization = JSON.parse(CacheStore.getObject('authorization'));
+    let authorization = JSON.parse(this.getCache().getObject('authorization'));
     if (!authorization) {
       this.router.navigate(['/']);
     }
     this.authorization = authorization;
+
+    this.reportName = this.getCache().getObject('report_name');
+    this.headers = [];
+    this.rows = [];
 
     let url = this.url_executions;
     if (status != null && status != 'TODOS') {
@@ -44,8 +44,9 @@ export class ReportComponent implements OnInit {
       console.log("No status.");
     }
 
+    this.setLoading(true);
     this.httpClient.get(
-      url.replace('{id}', CacheStore.getObject('report_id')),
+      url.replace('{id}', this.getCache().getObject('report_id')),
       {
         headers: new HttpHeaders({
           'Content-Type': 'application/json',
@@ -54,37 +55,8 @@ export class ReportComponent implements OnInit {
       }
     )
       .toPromise()
-      .then(response => {
-
-        // @ts-ignore
-        console.log(response.docs);
-
-        // @ts-ignore
-        CacheStore.addObject('executions', JSON.stringify(response.docs));
-
-        let headerRow = 0;
-        let headerColumns = 0;
-        // @ts-ignore
-        for (let i = 0; i < response.docs.length; i++) {
-          // @ts-ignore
-          let row = response.docs[i];
-          if (Object.keys(row).length > headerColumns) {
-            headerRow = i;
-          }
-        }
-
-        // @ts-ignore
-        this.addHeader(response.docs[headerRow]);
-
-        // @ts-ignore
-        for (let i = 0; i < response.docs.length; i++) {
-          // @ts-ignore
-          let row = response.docs[i];
-          this.addRow(row);
-        }
-
-      })
-      .catch(console.log);
+      .then((response : ExecutionResponse) => {this.handleResponse(response)})
+      .catch(exception => this.onError(exception));
 
   }
 
@@ -113,4 +85,31 @@ export class ReportComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  handleResponse(response : ExecutionResponse) {
+
+    this.getCache().addObject('executions', JSON.stringify(response.docs));
+
+    let headerRow = 0;
+    let headerColumns = 0;
+    for (let i = 0; i < response.docs.length; i++) {
+      let row = response.docs[i];
+      if (Object.keys(row).length > headerColumns) {
+        headerRow = i;
+      }
+    }
+
+    this.addHeader(response.docs[headerRow]);
+
+    for (let i = 0; i < response.docs.length; i++) {
+      let row = response.docs[i];
+      this.addRow(row);
+    }
+    this.setLoading(false);
+
+  }
+
+}
+
+interface ExecutionResponse {
+  docs: Array<Object>
 }

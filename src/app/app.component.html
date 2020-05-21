@@ -1,1 +1,10 @@
-<router-outlet></router-outlet>
+<div *ngIf="isLoading()">
+  <div class="spinner-border" role="status">
+    <span class="sr-only">Loading...</span>
+  </div>
+</div>
+
+<div [hidden]="isLoading()">
+  <router-outlet></router-outlet>
+</div>
+
