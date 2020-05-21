@@ -10,7 +10,7 @@ export class AppComponent {
   title = 'caf-lrech';
 
   isLoading() {
-    let loading = CacheStore.getObject('loading');
+    const loading = CacheStore.getObject('loading');
     return loading ? loading : false;
   }
 }

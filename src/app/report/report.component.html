@@ -1,16 +1,16 @@
-<div style="display: flex; align-items: center; flex-direction: column">
-  <a style="margin-bottom: 1em"><b>{{report_name}}</b></a>
+<div class="flex-column">
+  <a class="margin-bottom"><b>{{report_name}}</b></a>
 </div>
 
-<div style="width: 100%; align-items: center; display: flex; flex-direction: row; margin-bottom: 1em">
-  <a style="margin-right: 1em">Status:</a>
-  <select style="margin-right: 1em" [(ngModel)]="selectedFilter" class="form-control" id="exampleFormControlSelect1">
+<div class="flex-row margin-bottom">
+  <a class="margin-right">Status:</a>
+  <select class="margin-right form-control" [(ngModel)]="selectedFilter" id="exampleFormControlSelect1">
     <option *ngFor="let filter of filters">{{filter}}</option>
   </select>
   <button type="button" class="btn btn-primary" (click)="onSubmit(selectedFilter)">Apply</button>
 </div>
 
-<div style="overflow-x: auto;">
+<div class="overflow-x">
   <table class="table">
     <thead class="thead-dark">
     <tr>

@@ -12,7 +12,6 @@ import {Main} from '../../objects/Main';
 export class HomeComponent extends Main implements OnInit {
 
   private url_reports = 'https://api.dev.combateafraude.com/reports';
-  private authorization;
   reports = [];
 
   constructor(private httpClient: HttpClient, private router: Router, private renderer: Renderer2, private el: ElementRef) {
@@ -25,7 +24,6 @@ export class HomeComponent extends Main implements OnInit {
     if (!authorization) {
       this.router.navigate(['/']);
     }
-    this.authorization = authorization;
 
     this.httpClient.get(
       this.url_reports,
