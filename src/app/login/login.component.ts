@@ -12,6 +12,11 @@ export class LoginComponent extends Main implements OnInit {
 
   private url_login = 'https://api.dev.combateafraude.com/auth/signin';
 
+  public credentials: LoginCredentials = {
+    user: 'poc@combateafraude.com',
+    password: 'POC$123poc'
+  };
+
   constructor(private httpClient: HttpClient, private router: Router) {
     super();
   }
@@ -19,14 +24,19 @@ export class LoginComponent extends Main implements OnInit {
   ngOnInit(): void {
   }
 
-  onSubmit(user, password) {
+  onSubmit() {
+
+    const {user, password} = this.credentials;
+
+    console.log('user ', user);
+    console.log('password ', password);
 
     this.setLoading(true);
     this.httpClient.post(
       this.url_login,
       JSON.stringify({
         email: user,
-        password: password
+        password
       }),
       {
         headers: new HttpHeaders({
@@ -35,15 +45,15 @@ export class LoginComponent extends Main implements OnInit {
       }
     )
       .toPromise()
-      .then((response : LoginResponse) => this.handleResponse(response))
+      .then((response: LoginResponse) => this.handleResponse(response))
       .catch(exception => this.onError(exception));
 
   }
 
-  handleResponse(response : LoginResponse) {
-      this.getCache().addObject('authorization', JSON.stringify(response.body));
-      this.setLoading(false);
-      this.router.navigate(['/home']);
+  handleResponse(response: LoginResponse) {
+    this.getCache().addObject('authorization', JSON.stringify(response.body));
+    this.setLoading(false);
+    this.router.navigate(['/home']);
   }
 
 }
@@ -56,4 +66,9 @@ interface LoginResponse {
     refreshToken: string,
     tokenType: string
   }
+}
+
+interface LoginCredentials {
+  user: string,
+  password: string
 }

@@ -1,15 +1,13 @@
 <div class="flex-column">
   <a class="margin-bottom"><b>Authentication</b></a>
   <input class="margin-bottom form-control"
-    #user
-    type="text"
-    placeholder="Username"
-    value="poc@combateafraude.com">
+         [(ngModel)]="credentials.user"
+         type="text"
+         placeholder="Username">
   <input class="margin-bottom form-control"
-    #password
-    type="password"
-    placeholder="Password"
-    value="POC$123poc">
-  <button type="button" class="btn btn-primary" (click)="onSubmit(user.value, password.value)">Login
+         [(ngModel)]="credentials.password"
+         type="password"
+         placeholder="Password">
+  <button type="button" class="btn btn-primary" (click)="onSubmit()">Login
   </button>
 </div>

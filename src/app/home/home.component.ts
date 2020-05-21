@@ -12,7 +12,7 @@ import {Main} from '../../objects/Main';
 export class HomeComponent extends Main implements OnInit {
 
   private url_reports = 'https://api.dev.combateafraude.com/reports';
-  reports = [];
+  public reports: Array<Object> = [];
 
   constructor(private httpClient: HttpClient, private router: Router, private renderer: Renderer2, private el: ElementRef) {
     super();
@@ -28,14 +28,16 @@ export class HomeComponent extends Main implements OnInit {
     this.httpClient.get(
       this.url_reports,
       {
-        headers: new HttpHeaders( {
+        headers: new HttpHeaders({
           'Content-Type': 'application/json',
           'Authorization': authorization.idToken
         })
       }
     )
       .toPromise()
-      .then((response : ReportsResponse) => {this.handleResponse(response)})
+      .then((response: ReportsResponse) => {
+        this.handleResponse(response);
+      })
       .catch(exception => this.onError(exception));
   }
 
@@ -47,10 +49,11 @@ export class HomeComponent extends Main implements OnInit {
     this.onSubmit();
   }
 
-  handleResponse(response : ReportsResponse) {
-    for (let i = 0; i < response.body.length; i++) {
-      this.reports.push(response.body[i]);
-    }
+  handleResponse(response: ReportsResponse) {
+    response.body.map(data => {
+        this.reports.push(data);
+      }
+    );
     this.setLoading(false);
   }
 
