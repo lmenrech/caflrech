@@ -1,6 +1,6 @@
 import {Component, ElementRef, OnInit, Renderer2} from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
-import {Router} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {Main} from '../../objects/Main';
 
 @Component({
@@ -17,11 +17,13 @@ export class ReportComponent extends Main implements OnInit {
   filters = ['TODOS'];
   headers = [];
   rows = [];
-  reportName = "";
 
-  constructor(private httpClient: HttpClient, private router: Router, private renderer: Renderer2, private el: ElementRef) {
+  report_name;
+  report_id;
+
+  constructor(private activatedRoute : ActivatedRoute, private httpClient: HttpClient, private router: Router, private renderer: Renderer2, private el: ElementRef) {
     super();
-    this.onSubmit();
+    this.setLoading(true);
   }
 
   onSubmit(status = null) {
@@ -32,7 +34,6 @@ export class ReportComponent extends Main implements OnInit {
     }
     this.authorization = authorization;
 
-    this.reportName = this.getCache().getObject('report_name');
     this.headers = [];
     this.rows = [];
 
@@ -41,9 +42,8 @@ export class ReportComponent extends Main implements OnInit {
       url += '?status=' + status;
     }
 
-    this.setLoading(true);
     this.httpClient.get(
-      url.replace('{id}', this.getCache().getObject('report_id')),
+      url.replace('{id}', this.report_id),
       {
         headers: new HttpHeaders({
           'Content-Type': 'application/json',
@@ -80,11 +80,15 @@ export class ReportComponent extends Main implements OnInit {
   }
 
   ngOnInit(): void {
+    const { params } = this.activatedRoute;
+    params.subscribe(data => {
+      this.report_id = data.id;
+      this.report_name = data.name;
+    });
+    this.onSubmit();
   }
 
   handleResponse(response : ExecutionResponse) {
-
-    this.getCache().addObject('executions', JSON.stringify(response.docs));
 
     let headerRow = 0;
     let headerColumns = 0;
