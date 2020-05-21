@@ -6,6 +6,9 @@ export class Main {
 
   onError(exception) {
     this.getCache().addObject('loading', false);
+    if (exception.error.message) {
+      alert(exception.error.message);
+    }
     console.log(exception);
   }
 
