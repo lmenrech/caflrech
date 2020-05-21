@@ -39,9 +39,6 @@ export class ReportComponent extends Main implements OnInit {
     let url = this.url_executions;
     if (status != null && status != 'TODOS') {
       url += '?status=' + status;
-      console.log("Status: " + status);
-    } else {
-      console.log("No status.");
     }
 
     this.setLoading(true);
